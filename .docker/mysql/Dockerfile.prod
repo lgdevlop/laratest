@@ -1,0 +1,11 @@
+FROM mysql:5.7
+
+RUN usermod -u 1000 mysql
+
+ENV MYSQL_DATABASE=laravel
+
+ENV MYSQL_ROOT_PASSWORD=root
+
+ENV MYSQL_USER=root
+
+EXPOSE 3306

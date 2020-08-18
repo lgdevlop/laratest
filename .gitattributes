@@ -1,0 +1,5 @@
+laravel/* text=auto
+laravel/*.css linguist-vendored
+laravel/*.scss linguist-vendored
+laravel/*.js linguist-vendored
+laravel/CHANGELOG.md export-ignore
