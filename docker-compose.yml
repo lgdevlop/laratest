@@ -1,4 +1,4 @@
-version: '2.3'
+version: '3'
 
 services:
   app:
@@ -6,13 +6,17 @@ services:
       context: .docker/app
       dockerfile: Dockerfile.dev
     container_name: app
+    entrypoint: ./config.sh
+    environment: 
+      - DB_HOST_NAME=db
     volumes: 
       - ./laravel:/var/www
+      - ./config.sh:/var/www/config.sh
     networks: 
       - app-network
     depends_on:
-      db:
-        condition: service_healthy
+      - db
+      - redis
 
   nginx:
     build: 
@@ -27,6 +31,8 @@ services:
       - ./laravel:/var/www
     networks: 
       - app-network
+    depends_on:
+      - app
 
   db:
     build: 
@@ -46,11 +52,6 @@ services:
       - MYSQL_USER=root
     networks: 
       - app-network
-    healthcheck:
-      test: ["CMD-SHELL", 'mysql -uroot --database=laravel --password=root --execute="SELECT count(table_name) > 0 FROM information_schema.tables;" --skip-column-names -B']
-      interval: 10s
-      timeout: 10s
-      retries: 4
 
   redis:
     image: redis:alpine

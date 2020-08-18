@@ -10,4 +10,4 @@
 /laravel/Homestead.yaml
 /laravel/npm-debug.log
 /laravel/yarn-error.log
-./docker/dbdata
+/.docker/dbdata
