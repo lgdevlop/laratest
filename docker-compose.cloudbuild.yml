@@ -1,0 +1,65 @@
+version: '3'
+
+services:
+  app:
+    build: 
+      context: .docker/app
+      dockerfile: Dockerfile.dev
+    container_name: app
+    # entrypoint: ./config.sh
+    # environment: 
+    #   - DB_HOST_NAME=db
+    volumes: 
+      - ./laravel:/var/www
+      - ./config.sh:/var/www/config.sh
+    networks: 
+      - app-network
+    depends_on:
+      - db
+      - redis
+
+  nginx:
+    build: 
+      context: .docker/nginx
+      dockerfile: Dockerfile.dev
+    container_name: nginx
+    restart: always
+    tty: true
+    ports:
+      - "8000:80"
+    volumes: 
+      - ./laravel:/var/www
+    networks: 
+      - app-network
+    depends_on:
+      - app
+
+  db:
+    build: 
+      context: .docker/mysql
+      dockerfile: Dockerfile.dev
+    command: --innodb-use-native-aio=0
+    container_name: db
+    restart: always
+    tty: true
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./.docker/dbdata:/var/lib/mysql
+    environment: 
+      - MYSQL_DATABASE=laravel
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=root
+    networks: 
+      - app-network
+
+  redis:
+    image: redis:alpine
+    expose: 
+      - 6379
+    networks: 
+      - app-network
+
+networks: 
+  app-network:
+    driver: bridge
