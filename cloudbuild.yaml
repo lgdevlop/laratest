@@ -4,6 +4,10 @@ steps:
   name: 'gcr.io/$PROJECT_ID/docker-compose:1.25.5'
   args: ['-f', 'docker-compose.cloudbuild.yaml', 'up', '-d']
 
+- id: "Chown in /var/www"
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['exec','-u','root','-t','app','chown','-R','www-data:www-data','/var/www']
+
 - id: "Rodando docker ps"
   name: 'gcr.io/cloud-builders/docker'
   args: ['ps']
@@ -15,3 +19,15 @@ steps:
 - id: "Copiando .env"
   name: 'gcr.io/cloud-builders/docker'
   args: ['exec', '-t', 'app', 'cp', 'laravel/.env.example', 'laravel/.env']
+
+- id: "Rodando php key:generate"
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['exec', '-t', 'app', 'php', '/var/www/artisan', 'key:generate']
+
+- id: "Rodando php migrations"
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['exec', '-t', 'app', 'php', '/var/www/artisan', 'migrate']
+
+- id: "Rodando phpunit"
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['exec', '-t', 'app', 'php', '/var/www/vendor/bin/phpunit', '-c', '/var/www/phpunit.xml']
