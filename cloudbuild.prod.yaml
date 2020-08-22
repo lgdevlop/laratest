@@ -39,3 +39,22 @@ steps:
 - id: "Subindo imagem"
   name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/$PROJECT_ID/app-laravel:$SHORT_SHA']
+
+- id: "Ajustando o arquivo de deploy k8s"
+  name: 'gcr.io/cloud-builders/docker'
+  entrypoint: '/bin/sh'
+  args:
+    - '-c'
+    - |
+      sed 's#img-app-deployment#gcr.io/$PROJECT_ID/app-laravel:$SHORT_SHA#g' k8s/app/deployment.yaml > k8s/app/deployment-new.yaml;
+      cat k8s/app/deployment-new.yaml;
+
+- id: "Fazendo o deploy do k8s"
+  name: 'gcr.io/cloud-builders/kubectl'
+  args:
+    - 'apply'
+    - '-f'
+    - 'k8s/app/deployment-new.yaml'
+  env:
+    - 'CLOUDSKD_COMPUTE_ZONE=$_CC_ZONE'
+    - 'CLOUDSKD_CONTAINER_CLUSTER=$_CC_NAME'
