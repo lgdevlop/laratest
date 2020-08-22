@@ -5,9 +5,11 @@
 /laravel/vendor
 /laravel/.env
 /laravel/.env.backup
+/laravel/.env.example
 /laravel/.phpunit.result.cache
 /laravel/Homestead.json
 /laravel/Homestead.yaml
 /laravel/npm-debug.log
 /laravel/yarn-error.log
+/laravel/entrypoint.sh
 /.docker/dbdata
