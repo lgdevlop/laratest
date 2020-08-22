@@ -12,4 +12,5 @@
 /laravel/npm-debug.log
 /laravel/yarn-error.log
 /laravel/entrypoint.sh
+/laravel/nginx.conf
 /.docker/dbdata

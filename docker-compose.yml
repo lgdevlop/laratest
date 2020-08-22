@@ -27,12 +27,18 @@ services:
       context: .docker/nginx
       dockerfile: Dockerfile.dev
     container_name: nginx
+    entrypoint: dockerize -template /var/www/nginx.conf:/etc/nginx/conf.d/nginx.conf -timeout 10s /var/www/entrypoint.sh
+    environment: 
+      - NGINX_HOST=app
+      - NGINX_PORT=9000
     restart: always
     tty: true
     ports:
       - "8000:80"
     volumes: 
       - ./laravel:/var/www
+      - ./.docker/nginx/nginx.conf:/var/www/nginx.conf
+      - ./.docker/nginx/entrypoint.sh:/var/www/entrypoint.sh
     networks: 
       - app-network
     depends_on:
