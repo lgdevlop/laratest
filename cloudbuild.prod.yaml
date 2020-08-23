@@ -8,6 +8,11 @@ steps:
   name: 'gcr.io/cloud-builders/docker'
   args: ['exec','-u','root','-t','app','chown','-R','www-data:www-data','/var/www']
 
+- id: "Listando arquivos"
+  name: 'gcr.io/cloud-builders/docker'
+  entrypoint: '/bin/sh'
+  args: ['-c','ls','-la']
+
 - id: "Rodando docker ps"
   name: 'gcr.io/cloud-builders/docker'
   args: ['ps']
@@ -32,7 +37,7 @@ steps:
   name: 'gcr.io/cloud-builders/docker'
   args: ['exec', '-t', 'app', 'php', '/var/www/vendor/bin/phpunit', '-c', '/var/www/phpunit.xml']
 
-- id: "Criando imagem do Dockerfile.prod"
+- id: "Criando imagem do Dockerfile.cloudbuild"
   name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/$PROJECT_ID/app-laravel:$SHORT_SHA', '-f', './.docker/app/Dockerfile.cloudbuild', '.']
 
@@ -56,5 +61,5 @@ steps:
     - '-f'
     - 'k8s/app/deployment-new.yaml'
   env:
-    - 'CLOUDSKD_COMPUTE_ZONE=$_CC_ZONE'
-    - 'CLOUDSKD_CONTAINER_CLUSTER=$_CC_NAME'
+    - 'CLOUDSDK_COMPUTE_ZONE=${_CC_ZONE}'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=${_CC_NAME}'
