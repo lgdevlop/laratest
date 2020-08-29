@@ -2,6 +2,7 @@ Laratest
 ===================
 
 > Repositório de teste para containerização de aplicação laravel.
+> Com build no Cloud Build do Google Cloud Platform.
 
 ## Imagem no Dockerhub
 
